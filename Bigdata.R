@@ -1,5 +1,4 @@
 # 감정사전 활용 하기
-# 감정 분석iment analysis)
 # 텍스트에 어떤 감정이 담겨있는지 분석 방법
 
 # 감정 사전 불러오기
@@ -27,9 +26,8 @@ dic %>%
                             ifelse(polarity <= -1, "neg", "neu"))) %>%
   count(sentiment)
 
-# ㄱ  
-df <- tibble(sentence = c("국비과정은 기간이 길다 그래서 힘들지만 실습 ㅅ 스스로 배우는 습관과 행동을 기를 수 있어서 좋다.",
-                          "NCS 교재는 너무 구식이라 ㅅ 뒤 떨어져 있어서 불만이다. 내용도 부족하다. 하지만, 강사님께서 직접 구해오신 자료들이 그걸 만회 ㅎ 다행이다."))
+df <- tibble(sentence = c("테스트입니다. 빅데이터 수업 너무 좋아 교수님이 착하고 잘 자르치셔ㅎㅎ",
+                          "테스트입니다. 빅데이터 수업 싫고 할게 너무 많아서 짜증ㅠㅠ."))
 df
 
 # 텍스트를 단어 기준으로 토큰화: 감정 사전과 동 unnest_tokens(drop = F)
@@ -60,14 +58,14 @@ score_df
 
 # 댓글 감정 분석 #######################################################
 
-# 영화 '기생충' 관련 기사 댓글
+# 기사 댓글
 # 기본적인 전처리
 
 # 데이터 불러오기
-raw_news_comment <- read_csv("news_comment_parasite.csv")
+raw_news_comment <- read_csv("NaverNewsComment_닥터스트레인지2_1.csv")
 
 
-# 기본적인 저
+# 기본적인 전처리
 install.packages("textclean")
 library(textclean)
 news_comment <- raw_news_comment %>%
@@ -95,7 +93,7 @@ word_comment %>%
   select(word, polarity)
 
 
-##자주 사용된 감정 단어 살펴###############################
+##자주 사용된 감정 단어 살펴보기###############################
 
 # 1. 감정 분류하기
 word_comment <- word_comment %>%
@@ -160,16 +158,6 @@ ggplot(frequency_score, aes(x = sentiment, y = n, fill = sentiment)) +
   geom_text(aes(label = n), vjust = -0.3) +
   scale_x_discrete(limits = c("pos", "neu", "neg"))
 
-# 3. 비율 누계 그래프 만들기
-df <- tibble(contry = c("Korea", "Korea", "Japen", "Japen"), # 축
-             sex = c("M", "F", "M", "F"), # 누적막대
-             ratio = c(60, 40, 30, 70)) # 값
-
-ggplot(df, aes(x = contry, y = ratio, fill = sex)) +
-  geom_col() +
-  geom_text(aes(label = paste0(ratio, "%")), # % 표시
-            position = position_stack(vjust = 0.5)) # 가운데 표시
-
 # 댓글의 감정 비율로 누적 막대 그래프 만들기 #############################
 # 더미 변수 생성
 frequency_score$dummy <- 0
@@ -209,7 +197,7 @@ frequency_word %>%
 frequency_word %>%
   filter(sentiment == "neg")
 
-# 1. 고르 오즈비 구
+# 1. 로그 오즈비 구하기
 # wide form으로 변환
 library(tidyr)
 comment_wide <- frequency_word %>%
@@ -219,7 +207,7 @@ comment_wide <- frequency_word %>%
               values_fill = list(n = 0))
 comment_wide
 
-# ᄅ  구하기
+# 로그 구하기
 comment_wide <- comment_wide %>%
   mutate(log_odds_ratio = log(((pos + 1) / (sum(pos + 1))) /
                                 ((neg + 1) / (sum(neg + 1)))))
@@ -291,7 +279,7 @@ score_comment %>%
   mutate(ratio = n/sum(n)*100)
 
 
-# 수저 감정 사전 활용
+# 수정 감정 사전 활용
 new_score_comment %>%
   count(sentiment) %>%
   mutate(ratio = n/sum(n)*100)
@@ -357,3 +345,12 @@ new_score_comment %>%
   filter(sentiment == "pos" & str_detect(reply, "축하")) %>%
   select(reply)
 
+# 비트코인 시세
+df <- read.csv("Bitcoin_data_21_10_1_21_10_20.csv",header=T,stringsAsFactors = F)
+
+ggplot(df,aes(x=date,y=high))+
+  geom_bar(stat="identity",fill="gold",colour="black")+
+  theme(axis.text.x=element_text(angle=45,colour="blue",
+                                 size=7,hjust=1,vjust=1))+
+  theme(axis.text.y=element_text(size=rel(1),colour="red",
+                                 vjust=0))
