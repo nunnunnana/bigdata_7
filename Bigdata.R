@@ -62,7 +62,7 @@ score_df
 # 기본적인 전처리
 
 # 데이터 불러오기
-raw_news_comment <- read_csv("NaverNewsComment_닥터스트레인지2_1.csv")
+raw_news_comment <- read_csv("NaverNewsComment_비트코인_5_28_5_31.csv")
 
 
 # 기본적인 전처리
